@@ -1,7 +1,7 @@
 package com.basova.neuroDiagnost.patient.entity
 
 import com.basova.neuroDiagnost.auth.User
-import com.basova.neuroDiagnost.patient.entity.enum.Sex
+import com.basova.neuroDiagnost.patient.enum.Sex
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
