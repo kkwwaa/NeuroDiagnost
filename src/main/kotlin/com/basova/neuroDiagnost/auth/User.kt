@@ -26,7 +26,7 @@ class User(
     @Column(nullable = false, unique = true)
     var email: String,
 
-    @Column(name = "password_hach", nullable = false)
+    @Column(name = "password_hash", nullable = false)
     var passwordHash: String,
 
     @Column(nullable = false)
