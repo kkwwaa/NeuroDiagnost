@@ -9,7 +9,7 @@
 
 - **http://localhost:8080**
 
-## 🔐 Доступ (Spring Security по умолчанию)
+## 🔐 Доступ (Spring Security сейчас отключен в классе `SecurityConfig`)
 
 При первом запуске Spring Boot генерирует временный пароль.
 

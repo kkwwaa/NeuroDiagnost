@@ -1,5 +1,7 @@
 package com.basova.neuroDiagnost.common.exception
 
+import com.basova.neuroDiagnost.common.Errors
+
 class PatientNotFoundException(
     patientId: Long
-) : RuntimeException("Patient with id=$patientId not found")
+) : RuntimeException(Errors.patientNotFound(patientId))

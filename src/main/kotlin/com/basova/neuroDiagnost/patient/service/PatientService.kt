@@ -2,6 +2,7 @@ package com.basova.neuroDiagnost.patient.service
 
 import com.basova.neuroDiagnost.auth.repository.UserRepository
 import com.basova.neuroDiagnost.common.exception.PatientNotFoundException
+import com.basova.neuroDiagnost.common.exception.SpecialistNotFoundException
 import com.basova.neuroDiagnost.patient.dto.CreatePatientRequest
 import com.basova.neuroDiagnost.patient.dto.PatientResponse
 import com.basova.neuroDiagnost.patient.dto.UpdatePatientRequest
@@ -9,7 +10,6 @@ import com.basova.neuroDiagnost.patient.entity.Patient
 import com.basova.neuroDiagnost.patient.repository.PatientRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
-import jakarta.persistence.EntityNotFoundException
 
 @Service
 class PatientService(
@@ -20,7 +20,7 @@ class PatientService(
     fun create(request: CreatePatientRequest): PatientResponse {
         val specialist = userRepository.findById(request.specialistId)
             .orElseThrow {
-                EntityNotFoundException("Specialist not found")
+                SpecialistNotFoundException(request.specialistId)
             }
 
         val patient = Patient(

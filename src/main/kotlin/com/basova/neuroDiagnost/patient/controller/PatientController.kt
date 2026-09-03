@@ -6,7 +6,6 @@ import com.basova.neuroDiagnost.patient.dto.UpdatePatientRequest
 import com.basova.neuroDiagnost.patient.service.PatientService
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -22,75 +21,44 @@ import java.net.URI
 
 @RestController
 @RequestMapping("/api/v1/patients")
-@Tag(
-    name = "Patients",
-    description = "CRUD для пациентов"
-)
+@Tag(name = "Patients", description = "CRUD для пациентов")
 class PatientController(
     private val patientService: PatientService
 ) {
     @PostMapping
-    @ApiResponses(ApiResponse(responseCode = "400", description = "Некорректные данные"))
+    @ApiResponse(responseCode = "201", description = "Пациент создан")
     fun create(
-        @Valid
-        @RequestBody
-        request: CreatePatientRequest
+        @Valid @RequestBody request: CreatePatientRequest
     ): ResponseEntity<PatientResponse> {
         val patient = patientService.create(request)
-
         return ResponseEntity
             .created(URI.create("/api/v1/patients/${patient.id}"))
             .body(patient)
     }
 
     @GetMapping("/{id}")
-    @ApiResponses(ApiResponse(responseCode = "404", description = "Пациент не найден"))
+    @ApiResponse(responseCode = "200", description = "Пациент найден")
     fun findById(
-        @Parameter(
-            description = "ID пациента",
-            example = "1"
-        )
+        @Parameter(description = "ID пациента", example = "1")
         @PathVariable id: Long
     ): ResponseEntity<PatientResponse> {
-
-        return ResponseEntity.ok(
-            patientService.findById(id)
-        )
+        return ResponseEntity.ok(patientService.findById(id))
     }
 
     @PutMapping("/{id}")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "400", description = "Некорректные данные"),
-            ApiResponse(responseCode = "404", description = "Пациент не найден")
-        ]
-    )
+    @ApiResponse(responseCode = "200", description = "Пациент обновлён")
     fun update(
-        @Parameter(
-            description = "ID пациента",
-            example = "1"
-        )
+        @Parameter(description = "ID пациента", example = "1")
         @PathVariable id: Long,
-
-        @Valid
-        @RequestBody
-        request: UpdatePatientRequest
+        @Valid @RequestBody request: UpdatePatientRequest
     ): ResponseEntity<PatientResponse> {
-
-        return ResponseEntity.ok(
-            patientService.update(id, request)
-        )
+        return ResponseEntity.ok(patientService.update(id, request))
     }
 
     @DeleteMapping("/{id}")
-    @ApiResponses(
-            ApiResponse(responseCode = "404", description = "Пациент не найден"))
-    fun delete(
-        @PathVariable id: Long
-    ): ResponseEntity<Void> {
-
+    @ApiResponse(responseCode = "204", description = "Пациент удалён")
+    fun delete(@PathVariable id: Long): ResponseEntity<Void> {
         patientService.delete(id)
-
         return ResponseEntity.noContent().build()
     }
 }
