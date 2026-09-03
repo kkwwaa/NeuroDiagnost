@@ -1,5 +1,6 @@
-package com.basova.neuroDiagnost.auth
+package com.basova.neuroDiagnost.auth.entity
 
+import com.basova.neuroDiagnost.auth.enum.Role
 import com.basova.neuroDiagnost.patient.entity.Patient
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

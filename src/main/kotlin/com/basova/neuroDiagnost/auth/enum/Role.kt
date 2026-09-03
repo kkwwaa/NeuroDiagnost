@@ -1,4 +1,4 @@
-package com.basova.neuroDiagnost.auth
+package com.basova.neuroDiagnost.auth.enum
 
 enum class Role {
     SPECIALIST,
