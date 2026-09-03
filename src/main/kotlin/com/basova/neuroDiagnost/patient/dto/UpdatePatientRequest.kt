@@ -1,5 +1,6 @@
 package com.basova.neuroDiagnost.patient.dto
 
+import com.basova.neuroDiagnost.patient.enum.Sex
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -23,14 +24,14 @@ class UpdatePatientRequest(
         description = "Дата рождения",
         example = "2018-05-12"
     )
-    val birthDate: LocalDate?,
+    val birthDate: LocalDate,
 
     @field:Size(max = 32)
     @Schema(
         description = "Пол",
         example = "MALE"
     )
-    val sex: String? = null,
+    val sex: Sex? = null,
 
     @field:Size(max = 255)
     @Schema(

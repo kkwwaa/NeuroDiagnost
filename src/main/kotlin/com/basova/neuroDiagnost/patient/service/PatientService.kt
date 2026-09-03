@@ -1,5 +1,6 @@
 package com.basova.neuroDiagnost.patient.service
 
+import com.basova.neuroDiagnost.auth.repository.UserRepository
 import com.basova.neuroDiagnost.patient.dto.CreatePatientRequest
 import com.basova.neuroDiagnost.patient.dto.PatientResponse
 import com.basova.neuroDiagnost.patient.dto.UpdatePatientRequest
@@ -10,40 +11,79 @@ import org.springframework.stereotype.Service
 
 @Service
 class PatientService(
-    val patientRepository: PatientRepository
+    val patientRepository: PatientRepository,
+    val userRepository: UserRepository
 ) {
     @Transactional
-    fun create(request: CreatePatientRequest): PatientResponse? {
-        return null
+    fun create(request: CreatePatientRequest): PatientResponse {
+        val patient = Patient(
+            specialist = requireNotNull(userRepository.findById(request.specialistId).orElse(null)),
+            fullName = requireNotNull(request.fullName).trim(),
+            birthDate = requireNotNull(request.birthDate),
+            sex = request.sex,
+            parentName = request.parentName?.trim(),
+            phone = request.phone?.trim(),
+            anamnesis = request.anamnesis,
+        )
+
+        val savedPatient = patientRepository.save(patient)
+
+        return savedPatient.toResponse()
     }
 
-    fun findById(patientId: Long): PatientResponse? {
-        return null
+    fun findById(patientId: Long): PatientResponse {
+        val patient = patientRepository.findById(patientId).orElseThrow {
+            RuntimeException("Patient with ID $patientId not found") // todo: replace with cast-exspn
+        }
+
+        return patient.toResponse()
     }
 
-    fun findBySpecialistId(specialistId: Long): PatientResponse? {
-        return null
+    fun findBySpecialistId(specialistId: Long): List<PatientResponse> {
+        val patients = patientRepository.findAllBySpecialistId(specialistId).map {
+            it.toResponse()
+        }
+
+        return patients
     }
 
-    fun update(request: UpdatePatientRequest): PatientResponse? {
-        return null
+    @Transactional
+    fun update(id: Long, request: UpdatePatientRequest): PatientResponse {
+        val patient = patientRepository.findById(id)
+            .orElseThrow {
+                RuntimeException("Patient with ID $id not found")//todo: replace with cast excpn
+            }
+
+        patient.fullName = request.fullName.trim()
+        patient.birthDate = request.birthDate
+        patient.sex = request.sex
+        patient.parentName = request.parentName?.trim()
+        patient.phone = request.phone?.trim()
+        patient.anamnesis = request.anamnesis?.trim()
+
+        return patient.toResponse()
     }
-    
-    fun delete(id: Long): Boolean {
-        return false
+
+    @Transactional
+    fun delete(id: Long) {
+        val patient = patientRepository.findById(id).orElseThrow{
+            RuntimeException("Patient with ID $id not found")//todo:replace
+        }
+
+        patientRepository.delete(patient)
     }
-    
+
     private fun Patient.toResponse(): PatientResponse {
         return PatientResponse(
-            id = TODO(),
-            specialistId = TODO(),
-            fullName = TODO(),
-            birthDate = TODO(),
-            sex = TODO(),
-            parentName = TODO(),
-            phone = TODO(),
-            anamnesis = TODO(),
-            createdAt = TODO()
+            id = requireNotNull(id),
+            fullName = fullName,
+            birthDate = birthDate,
+            sex = sex,
+            parentName = parentName,
+            phone = phone,
+            anamnesis = anamnesis,
+            specialistId = specialist.id!!,
+            createdAt = createdAt
         )
     }
 }

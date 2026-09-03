@@ -1,5 +1,8 @@
 package com.basova.neuroDiagnost.patient.dto
+import com.basova.neuroDiagnost.patient.enum.Sex
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.PastOrPresent
@@ -37,7 +40,7 @@ data class CreatePatientRequest(
         description = "Пол",
         example = "MALE"
     )
-    val sex: String? = null,
+    val sex: Sex? = null,
 
     @field:Size(max = 255)
     @Schema(

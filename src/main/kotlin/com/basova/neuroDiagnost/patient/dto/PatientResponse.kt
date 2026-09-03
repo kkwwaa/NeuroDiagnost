@@ -1,5 +1,6 @@
 package com.basova.neuroDiagnost.patient.dto
 
+import com.basova.neuroDiagnost.patient.enum.Sex
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -19,7 +20,7 @@ class PatientResponse(
     val birthDate: LocalDate,
 
     @Schema(example = "MALE")
-    val sex: String?,
+    val sex: Sex?,
 
     @Schema(example = "Иванова Анна Сергеевна")
     val parentName: String?,
