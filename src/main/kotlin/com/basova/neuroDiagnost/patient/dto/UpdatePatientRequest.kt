@@ -26,7 +26,6 @@ class UpdatePatientRequest(
     )
     val birthDate: LocalDate,
 
-    @field:Size(max = 32)
     @Schema(
         description = "Пол",
         example = "MALE"

@@ -1,6 +1,7 @@
 package com.basova.neuroDiagnost.patient.service
 
 import com.basova.neuroDiagnost.auth.repository.UserRepository
+import com.basova.neuroDiagnost.common.exception.PatientNotFoundException
 import com.basova.neuroDiagnost.patient.dto.CreatePatientRequest
 import com.basova.neuroDiagnost.patient.dto.PatientResponse
 import com.basova.neuroDiagnost.patient.dto.UpdatePatientRequest
@@ -8,6 +9,7 @@ import com.basova.neuroDiagnost.patient.entity.Patient
 import com.basova.neuroDiagnost.patient.repository.PatientRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import jakarta.persistence.EntityNotFoundException
 
 @Service
 class PatientService(
@@ -16,8 +18,13 @@ class PatientService(
 ) {
     @Transactional
     fun create(request: CreatePatientRequest): PatientResponse {
+        val specialist = userRepository.findById(request.specialistId)
+            .orElseThrow {
+                EntityNotFoundException("Specialist not found")
+            }
+
         val patient = Patient(
-            specialist = requireNotNull(userRepository.findById(request.specialistId).orElse(null)),
+            specialist = specialist,
             fullName = requireNotNull(request.fullName).trim(),
             birthDate = requireNotNull(request.birthDate),
             sex = request.sex,
@@ -33,7 +40,7 @@ class PatientService(
 
     fun findById(patientId: Long): PatientResponse {
         val patient = patientRepository.findById(patientId).orElseThrow {
-            RuntimeException("Patient with ID $patientId not found") // todo: replace with cast-exspn
+            PatientNotFoundException(patientId)
         }
 
         return patient.toResponse()
@@ -51,7 +58,7 @@ class PatientService(
     fun update(id: Long, request: UpdatePatientRequest): PatientResponse {
         val patient = patientRepository.findById(id)
             .orElseThrow {
-                RuntimeException("Patient with ID $id not found")//todo: replace with cast excpn
+                PatientNotFoundException(id)
             }
 
         patient.fullName = request.fullName.trim()
@@ -67,7 +74,7 @@ class PatientService(
     @Transactional
     fun delete(id: Long) {
         val patient = patientRepository.findById(id).orElseThrow{
-            RuntimeException("Patient with ID $id not found")//todo:replace
+            PatientNotFoundException(id)
         }
 
         patientRepository.delete(patient)
