@@ -1,5 +1,6 @@
 package com.basova.neuroDiagnost.patient.dto
 import com.basova.neuroDiagnost.patient.enum.Sex
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
@@ -7,13 +8,15 @@ import jakarta.validation.constraints.PastOrPresent
 import jakarta.validation.constraints.Size
 import java.time.LocalDate
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Schema(description = "Данные для создания пациента")
 data class CreatePatientRequest(
 
     @field:NotNull
     @Schema(
         description = "ID специалиста, которому принадлежит пациент",
-        example = "1"
+        example = "1",
+        required = true
     )
     val specialistId: Long,
 
@@ -21,7 +24,8 @@ data class CreatePatientRequest(
     @field:Size(max = 255)
     @Schema(
         description = "ФИО пациента",
-        example = "Иванов Иван Иванович"
+        example = "Иванов Иван Иванович",
+        required = true
     )
     val fullName: String,
 
@@ -29,7 +33,8 @@ data class CreatePatientRequest(
     @field:PastOrPresent
     @Schema(
         description = "Дата рождения",
-        example = "2018-05-12"
+        example = "2018-05-12",
+        required = true
     )
     val birthDate: LocalDate?,
 

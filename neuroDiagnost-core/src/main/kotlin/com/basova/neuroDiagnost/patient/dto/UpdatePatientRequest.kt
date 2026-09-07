@@ -14,7 +14,8 @@ data class UpdatePatientRequest(
     @field:Size(max = 255)
     @Schema(
         description = "ФИО пациента",
-        example = "Иванов Иван Иванович"
+        example = "Иванов Иван Иванович",
+        required = true,
     )
     val fullName: String,
 
@@ -22,7 +23,8 @@ data class UpdatePatientRequest(
     @field:PastOrPresent
     @Schema(
         description = "Дата рождения",
-        example = "2018-05-12"
+        example = "2018-05-12",
+        required = true,
     )
     val birthDate: LocalDate,
 
