@@ -6,7 +6,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Schema(description = "Пациент")
-class PatientResponse(
+data class PatientResponse(
     @Schema(example = "1")
     val id: Long,
 

@@ -8,7 +8,7 @@ import jakarta.validation.constraints.PastOrPresent
 import jakarta.validation.constraints.Size
 import java.time.LocalDate
 
-class UpdatePatientRequest(
+data class UpdatePatientRequest(
 
     @field:NotBlank
     @field:Size(max = 255)
