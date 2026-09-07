@@ -1,6 +1,6 @@
 package com.basova.neuroDiagnost.common.exception
 
-import com.basova.neuroDiagnost.common.Errors
+import com.basova.neuroDiagnost.common.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -18,10 +18,10 @@ class GlobalExceptionHandler {
         return ProblemDetail
             .forStatusAndDetail(
                 HttpStatus.NOT_FOUND,
-                exception.message ?: Errors.PATIENT_NOT_FOUND
+                exception.message ?: PATIENT_NOT_FOUND
             )
             .apply {
-                title = Errors.PATIENT_NOT_FOUND
+                title = PATIENT_NOT_FOUND
             }
     }
 
@@ -33,10 +33,10 @@ class GlobalExceptionHandler {
         return ProblemDetail
             .forStatusAndDetail(
                 HttpStatus.NOT_FOUND,
-                exception.message ?: Errors.SPECIALIST_NOT_FOUND
+                exception.message ?: SPECIALIST_NOT_FOUND
             )
             .apply {
-                title = Errors.SPECIALIST_NOT_FOUND
+                title = SPECIALIST_NOT_FOUND
             }
     }
 
@@ -48,17 +48,17 @@ class GlobalExceptionHandler {
         val errors = exception.bindingResult
             .fieldErrors
             .associate {
-                it.field to (it.defaultMessage ?: Errors.INVALID_VALUE)
+                it.field to (it.defaultMessage ?: INVALID_VALUE)
             }
 
         return ProblemDetail
             .forStatusAndDetail(
                 HttpStatus.BAD_REQUEST,
-                Errors.REQUEST_VALIDATION_FAILED
+                REQUEST_VALIDATION_FAILED
             )
             .apply {
-                title = Errors.VALIDATION_ERROR
-                setProperty(Errors.ERRORS, errors)
+                title = VALIDATION_ERROR
+                setProperty(ERRORS, errors)
             }
     }
 }

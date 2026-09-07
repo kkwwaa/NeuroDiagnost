@@ -1,7 +1,7 @@
 package com.basova.neuroDiagnost.common.exception
 
-import com.basova.neuroDiagnost.common.Errors
+import com.basova.neuroDiagnost.common.specialistNotFound
 
 class SpecialistNotFoundException(
     specialistId: Long
-) : RuntimeException(Errors.specialistNotFound(specialistId))
+) : RuntimeException(specialistNotFound(specialistId))
