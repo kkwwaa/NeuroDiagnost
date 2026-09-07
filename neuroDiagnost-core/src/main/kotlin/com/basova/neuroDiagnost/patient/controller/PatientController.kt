@@ -31,9 +31,7 @@ class PatientController(
         @Valid @RequestBody request: CreatePatientRequest
     ): ResponseEntity<PatientResponse> {
         val patient = patientService.create(request)
-        return ResponseEntity
-            .created(URI.create("/api/v1/patients/${patient.id}"))
-            .body(patient)
+        return ResponseEntity.ok(patient)
     }
 
     @GetMapping("/{id}")
