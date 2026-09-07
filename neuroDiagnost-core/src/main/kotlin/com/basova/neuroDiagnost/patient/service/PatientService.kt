@@ -1,5 +1,6 @@
 package com.basova.neuroDiagnost.patient.service
 
+import com.basova.neuroDiagnost.auth.entity.User
 import com.basova.neuroDiagnost.auth.repository.UserRepository
 import com.basova.neuroDiagnost.common.exception.PatientNotFoundException
 import com.basova.neuroDiagnost.common.exception.SpecialistNotFoundException
@@ -8,7 +9,7 @@ import com.basova.neuroDiagnost.patient.dto.PatientResponse
 import com.basova.neuroDiagnost.patient.dto.UpdatePatientRequest
 import com.basova.neuroDiagnost.patient.entity.Patient
 import com.basova.neuroDiagnost.patient.repository.PatientRepository
-import jakarta.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,10 +19,7 @@ class PatientService(
 ) {
     @Transactional
     fun create(request: CreatePatientRequest): PatientResponse {
-        val specialist = userRepository.findById(request.specialistId)
-            .orElseThrow {
-                SpecialistNotFoundException(request.specialistId)
-            }
+        val specialist = findSpecialistById(request.specialistId)
 
         val patient = Patient(
             specialist = specialist,
@@ -38,14 +36,14 @@ class PatientService(
         return savedPatient.toResponse()
     }
 
+    @Transactional(readOnly = true)
     fun findById(patientId: Long): PatientResponse {
-        val patient = patientRepository.findById(patientId).orElseThrow {
-            PatientNotFoundException(patientId)
-        }
+        val patient = findPatientById(patientId)
 
         return patient.toResponse()
     }
 
+    @Transactional(readOnly = true)
     fun findBySpecialistId(specialistId: Long): List<PatientResponse> {
         val patients = patientRepository.findAllBySpecialistId(specialistId).map {
             it.toResponse()
@@ -56,10 +54,7 @@ class PatientService(
 
     @Transactional
     fun update(id: Long, request: UpdatePatientRequest): PatientResponse {
-        val patient = patientRepository.findById(id)
-            .orElseThrow {
-                PatientNotFoundException(id)
-            }
+        val patient = findPatientById(id)
 
         patient.fullName = request.fullName.trim()
         patient.birthDate = request.birthDate
@@ -73,9 +68,7 @@ class PatientService(
 
     @Transactional
     fun delete(id: Long) {
-        val patient = patientRepository.findById(id).orElseThrow{
-            PatientNotFoundException(id)
-        }
+        val patient = findPatientById(id)
 
         patientRepository.delete(patient)
     }
@@ -92,5 +85,19 @@ class PatientService(
             specialistId = specialist.id!!,
             createdAt = createdAt
         )
+    }
+
+    private fun findPatientById(id: Long): Patient {
+        return patientRepository.findById(id)
+            .orElseThrow {
+                PatientNotFoundException(id)
+            }
+    }
+
+    private fun findSpecialistById(id: Long): User {
+        return userRepository.findById(id)
+            .orElseThrow {
+                SpecialistNotFoundException(id)
+            }
     }
 }
