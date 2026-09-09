@@ -1,6 +1,5 @@
 package com.basova.neuroDiagnost.common
 
-
 const val ERRORS = "errors"
 const val PATIENT_NOT_FOUND = "Patient not found"
 const val SPECIALIST_NOT_FOUND = "Specialist not found"

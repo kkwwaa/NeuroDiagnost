@@ -49,7 +49,6 @@ class Patient (
 
     @Column(name = "created_at", nullable = false)
     val createdAt: LocalDateTime = LocalDateTime.now(),
-
     )
 {
 }

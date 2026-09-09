@@ -10,7 +10,7 @@ interface PatientService {
 
     fun findById(patientId: Long): PatientResponse
 
-    fun findBySpecialistId(specialistId: Long): List<PatientResponse>
+    fun findAllBySpecialistId(specialistId: Long): List<PatientResponse>
 
     fun update(id: Long, request: UpdatePatientRequest): PatientResponse
 

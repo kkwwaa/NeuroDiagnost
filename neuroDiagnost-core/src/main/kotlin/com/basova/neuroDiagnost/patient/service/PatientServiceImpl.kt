@@ -8,6 +8,7 @@ import com.basova.neuroDiagnost.patient.dto.CreatePatientRequest
 import com.basova.neuroDiagnost.patient.dto.PatientResponse
 import com.basova.neuroDiagnost.patient.dto.UpdatePatientRequest
 import com.basova.neuroDiagnost.patient.entity.Patient
+import com.basova.neuroDiagnost.patient.mapper.PatientMapper
 import com.basova.neuroDiagnost.patient.repository.PatientRepository
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.stereotype.Service
@@ -33,20 +34,20 @@ class PatientServiceImpl(
 
         val savedPatient = patientRepository.save(patient)
 
-        return savedPatient.toResponse()
+        return PatientMapper.toResponse(savedPatient)
     }
 
     @Transactional(readOnly = true)
     override fun findById(patientId: Long): PatientResponse {
         val patient = findPatientById(patientId)
 
-        return patient.toResponse()
+        return PatientMapper.toResponse(patient)
     }
 
     @Transactional(readOnly = true)
-    override fun findBySpecialistId(specialistId: Long): List<PatientResponse> {
+    override fun findAllBySpecialistId(specialistId: Long): List<PatientResponse> {
         val patients = patientRepository.findAllBySpecialistId(specialistId).map {
-            it.toResponse()
+            PatientMapper.toResponse(it)
         }
 
         return patients
@@ -63,7 +64,7 @@ class PatientServiceImpl(
         patient.phone = request.phone?.trim()
         patient.anamnesis = request.anamnesis?.trim()
 
-        return patient.toResponse()
+        return PatientMapper.toResponse(patient)
     }
 
     @Transactional
@@ -71,20 +72,6 @@ class PatientServiceImpl(
         val patient = findPatientById(id)
 
         patientRepository.delete(patient)
-    }
-
-    private fun Patient.toResponse(): PatientResponse {
-        return PatientResponse(
-            id = requireNotNull(id),
-            fullName = fullName,
-            birthDate = birthDate,
-            sex = sex,
-            parentName = parentName,
-            phone = phone,
-            anamnesis = anamnesis,
-            specialistId = specialist.id!!,
-            createdAt = createdAt
-        )
     }
 
     private fun findPatientById(id: Long): Patient {

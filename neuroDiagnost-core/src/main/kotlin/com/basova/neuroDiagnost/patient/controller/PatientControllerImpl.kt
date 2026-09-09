@@ -49,7 +49,7 @@ class PatientControllerImpl (
         @Parameter(description = "ID специалиста", example = "1")
         @RequestParam specialistId: Long
     ): ResponseEntity<List<PatientResponse>> {
-        return ResponseEntity.ok(patientService.findBySpecialistId(specialistId))
+        return ResponseEntity.ok(patientService.findAllBySpecialistId(specialistId))
     }
 
     @PutMapping("/{id}")
