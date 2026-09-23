@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Schema(description = "Данные для создания сессии")
 data class CreateSessionRequest (
-    @field:NotNull
+    @field:NotNull // todo: ai предлагает заменить все нотНал при id на Positive аннотацию
     @Schema(
         description = "ID пациента, с которым проводят сессию",
         example = "1",

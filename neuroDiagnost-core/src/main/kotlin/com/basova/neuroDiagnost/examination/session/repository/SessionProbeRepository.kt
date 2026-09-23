@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface SessionProbeRepository: JpaRepository<SessionProbe, Long> {
+    fun findAllBySessionId(sessionId: Long): List<SessionProbe>
 }

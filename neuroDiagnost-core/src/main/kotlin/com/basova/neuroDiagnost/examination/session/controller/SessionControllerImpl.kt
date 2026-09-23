@@ -1,10 +1,9 @@
 package com.basova.neuroDiagnost.examination.session.controller
 
 import com.basova.neuroDiagnost.examination.session.dto.CreateSessionRequest
-import com.basova.neuroDiagnost.patient.dto.CreatePatientRequest
+import com.basova.neuroDiagnost.examination.session.dto.SessionProbeResponse
 import com.basova.neuroDiagnost.examination.session.dto.SessionResponse
 import com.basova.neuroDiagnost.examination.session.service.SessionService
-import com.basova.neuroDiagnost.patient.dto.PatientResponse
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -41,4 +40,17 @@ class SessionControllerImpl (
     ): ResponseEntity<SessionResponse> {
         return ResponseEntity.ok(sessionService.findById(id))
     }
+
+    @GetMapping("/{sessionId}/probes")
+    @ApiResponse(responseCode = "200", description = "Пробы сессии найдены")
+    override fun findProbes(
+        @Parameter(description = "ID сессии", example = "1")
+        @PathVariable sessionId: Long
+    ): ResponseEntity<List<SessionProbeResponse>> {
+        val probes = sessionService.findProbes(sessionId)
+
+        return ResponseEntity.ok(probes)
+    }
+
+
 }
