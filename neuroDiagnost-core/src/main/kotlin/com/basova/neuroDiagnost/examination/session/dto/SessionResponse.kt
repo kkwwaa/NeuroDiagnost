@@ -15,9 +15,9 @@ data class SessionResponse (
     @Schema(description = "ID протокола, по которому проводят сессию", example = "1", required = true)
     val protocolId: Long,
 
-    @Schema(description = "Статус сессии", example = "IN_PROGRESS", required = false)
+    @Schema(description = "Статус сессии", example = "IN_PROGRESS", required = true)
     val status: SessionStatus,
 
-    @Schema(description = "Дата начала сессии", example = "2018-05-12", required = true)
+    @Schema(description = "Дата начала сессии", example = "2026-05-12", required = true)
     val examinationDate: LocalDate
 )
