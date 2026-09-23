@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
+// todo: duplicate code
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
@@ -52,6 +53,21 @@ class GlobalExceptionHandler {
             )
             .apply {
                 title = PROTOCOL_NOT_FOUND
+            }
+    }
+
+    @ExceptionHandler(SessionNotFoundException::class)
+    fun handleSessionNotFound(
+        exception: SessionNotFoundException
+    ): ProblemDetail {
+
+        return ProblemDetail
+            .forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                exception.message ?: SESSION_NOT_FOUND
+            )
+            .apply {
+                title = SESSION_NOT_FOUND
             }
     }
 

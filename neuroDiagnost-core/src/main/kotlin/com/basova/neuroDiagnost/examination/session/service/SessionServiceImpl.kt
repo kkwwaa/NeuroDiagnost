@@ -1,5 +1,6 @@
 package com.basova.neuroDiagnost.examination.session.service
 
+import com.basova.neuroDiagnost.auth.entity.User
 import com.basova.neuroDiagnost.examination.protocol.repository.ProtocolProbeRepository
 import com.basova.neuroDiagnost.examination.protocol.repository.ProtocolRepository
 import com.basova.neuroDiagnost.examination.session.dto.CreateSessionRequest
@@ -8,13 +9,14 @@ import com.basova.neuroDiagnost.examination.session.entity.Session
 import com.basova.neuroDiagnost.examination.session.entity.SessionProbe
 import com.basova.neuroDiagnost.common.exception.PatientNotFoundException
 import com.basova.neuroDiagnost.common.exception.ProtocolNotFoundException
+import com.basova.neuroDiagnost.common.exception.SessionNotFoundException
 import com.basova.neuroDiagnost.examination.session.enum.SessionProbeStatus
 import com.basova.neuroDiagnost.examination.session.enum.SessionStatus
 import com.basova.neuroDiagnost.examination.session.mapper.SessionMapper
 import com.basova.neuroDiagnost.examination.session.repository.SessionProbeRepository
 import com.basova.neuroDiagnost.examination.session.repository.SessionRepository
 import com.basova.neuroDiagnost.patient.repository.PatientRepository
-import jakarta.transaction.Transactional
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.stereotype.Service
 
 @Service
@@ -59,5 +61,19 @@ class SessionServiceImpl (
         sessionProbeRepository.saveAll(sessionProbes)
 
         return SessionMapper.toResponse(savedSession)
+    }
+
+    @Transactional(readOnly = true)
+    override fun findById(sessionId: Long): SessionResponse {
+        val session = findSessionById(sessionId)
+
+        return SessionMapper.toResponse(session)
+    }
+
+    private fun findSessionById(id: Long): Session {
+        return sessionRepository.findById(id)
+            .orElseThrow {
+                SessionNotFoundException(id)
+            }
     }
 }

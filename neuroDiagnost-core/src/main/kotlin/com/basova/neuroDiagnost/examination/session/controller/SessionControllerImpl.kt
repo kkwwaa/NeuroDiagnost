@@ -4,10 +4,14 @@ import com.basova.neuroDiagnost.examination.session.dto.CreateSessionRequest
 import com.basova.neuroDiagnost.patient.dto.CreatePatientRequest
 import com.basova.neuroDiagnost.examination.session.dto.SessionResponse
 import com.basova.neuroDiagnost.examination.session.service.SessionService
+import com.basova.neuroDiagnost.patient.dto.PatientResponse
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -27,5 +31,14 @@ class SessionControllerImpl (
     ): ResponseEntity<SessionResponse> {
         val session = sessionService.create(request)
         return ResponseEntity.ok(session)
+    }
+
+    @GetMapping("/{id}")
+    @ApiResponse(responseCode = "200", description = "Сессия найден")
+    override fun findById(
+        @Parameter(description = "ID сессии", example = "1")
+        @PathVariable id: Long
+    ): ResponseEntity<SessionResponse> {
+        return ResponseEntity.ok(sessionService.findById(id))
     }
 }

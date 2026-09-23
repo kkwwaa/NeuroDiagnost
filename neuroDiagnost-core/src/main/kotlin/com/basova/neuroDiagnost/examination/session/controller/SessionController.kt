@@ -7,4 +7,6 @@ import org.springframework.http.ResponseEntity
 interface SessionController {
     fun create( request: CreateSessionRequest) : ResponseEntity<SessionResponse>
 
+    fun findById(id: Long) : ResponseEntity<SessionResponse>
+
 }
