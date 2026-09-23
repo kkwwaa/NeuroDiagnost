@@ -40,6 +40,21 @@ class GlobalExceptionHandler {
             }
     }
 
+    @ExceptionHandler(ProtocolNotFoundException::class)
+    fun handleProtocolNotFound(
+        exception: ProtocolNotFoundException
+    ): ProblemDetail {
+
+        return ProblemDetail
+            .forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                exception.message ?: PROTOCOL_NOT_FOUND
+            )
+            .apply {
+                title = PROTOCOL_NOT_FOUND
+            }
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidation(
         exception: MethodArgumentNotValidException

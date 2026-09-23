@@ -2,6 +2,7 @@ package com.basova.neuroDiagnost.common
 
 const val ERRORS = "errors"
 const val PATIENT_NOT_FOUND = "Patient not found"
+const val PROTOCOL_NOT_FOUND = "Protocol not found"
 const val SPECIALIST_NOT_FOUND = "Specialist not found"
 const val VALIDATION_ERROR = "Validation error"
 const val REQUEST_VALIDATION_FAILED = "Request validation failed"
