@@ -14,7 +14,7 @@ object PatientMapper {
             parentName = patient.parentName,
             phone = patient.phone,
             anamnesis = patient.anamnesis,
-            specialistId = patient.specialist.id!!,
+            specialistId = requireNotNull(patient.specialist.id),
             createdAt = patient.createdAt
         )
     }

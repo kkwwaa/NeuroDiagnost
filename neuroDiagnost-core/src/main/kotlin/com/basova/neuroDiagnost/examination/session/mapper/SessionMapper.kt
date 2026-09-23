@@ -10,9 +10,9 @@ object SessionMapper {
     fun toResponse(session: Session): SessionResponse {
         return SessionResponse(
             id = requireNotNull(session.id),
-            patientId = session.patient.id!!,
-            protocolId = session.protocol.id!!,
-            status = requireNotNull(session.status),
+            patientId = requireNotNull(session.patient.id),
+            protocolId = requireNotNull(session.protocol.id),
+            status = session.status,
             examinationDate = session.examinationDate
         )
     }
