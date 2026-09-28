@@ -4,6 +4,7 @@ import com.basova.neuroDiagnost.examination.session.dto.CreateSessionRequest
 import com.basova.neuroDiagnost.examination.session.dto.SessionProbeResponse
 import com.basova.neuroDiagnost.examination.session.dto.SessionResponse
 import com.basova.neuroDiagnost.examination.session.service.SessionService
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -41,6 +42,10 @@ class SessionControllerImpl (
         return ResponseEntity.ok(sessionService.findById(id))
     }
 
+    @Operation(
+        summary = "Получить пробы сессии",
+        description = "Возвращает список проб сессии в порядке их выполнения"
+    )
     @GetMapping("/{sessionId}/probes")
     @ApiResponse(responseCode = "200", description = "Пробы сессии найдены")
     override fun findProbes(

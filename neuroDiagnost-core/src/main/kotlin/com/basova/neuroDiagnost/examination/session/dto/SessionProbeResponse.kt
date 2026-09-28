@@ -6,7 +6,6 @@ import java.time.LocalDateTime
 
 @Schema(description = "Проба в рамках сессии обследования")
 data class SessionProbeResponse(
-
     @Schema(description = "ID пробы", example = "1", required = true)
     val probeId: Long,
 

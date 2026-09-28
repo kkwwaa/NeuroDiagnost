@@ -12,8 +12,7 @@ import com.basova.neuroDiagnost.common.exception.ProtocolNotFoundException
 import com.basova.neuroDiagnost.common.exception.SessionNotFoundException
 import com.basova.neuroDiagnost.examination.session.enum.SessionProbeStatus
 import com.basova.neuroDiagnost.examination.session.enum.SessionStatus
-import com.basova.neuroDiagnost.examination.session.mapper.SessionMapper
-import com.basova.neuroDiagnost.examination.session.mapper.SessionProbeMapper
+import com.basova.neuroDiagnost.examination.session.mapper.toResponse
 import com.basova.neuroDiagnost.examination.session.repository.SessionProbeRepository
 import com.basova.neuroDiagnost.examination.session.repository.SessionRepository
 import com.basova.neuroDiagnost.patient.repository.PatientRepository
@@ -61,14 +60,14 @@ class SessionServiceImpl (
 
         sessionProbeRepository.saveAll(sessionProbes)
 
-        return SessionMapper.toResponse(savedSession)
+        return toResponse(savedSession)
     }
 
     @Transactional(readOnly = true)
     override fun findById(sessionId: Long): SessionResponse {
         val session = findSessionById(sessionId)
 
-        return SessionMapper.toResponse(session)
+        return toResponse(session)
     }
 
     @Transactional(readOnly = true)
@@ -90,7 +89,7 @@ class SessionServiceImpl (
 
                 val sessionProbe = requireNotNull(sessionProbesByProbeId[probeId])
 
-                SessionProbeMapper.toResponse(
+                toResponse(
                     sessionProbe = sessionProbe,
                     sortOrder = protocolProbe.sortOrder
                 )
