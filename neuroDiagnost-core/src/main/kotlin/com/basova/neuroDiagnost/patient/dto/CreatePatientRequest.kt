@@ -3,8 +3,8 @@ import com.basova.neuroDiagnost.patient.enum.Sex
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.PastOrPresent
+import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.Size
 import java.time.LocalDate
 
@@ -12,7 +12,7 @@ import java.time.LocalDate
 @Schema(description = "Данные для создания пациента")
 data class CreatePatientRequest(
 
-    @field:NotNull
+    @field:Positive
     @Schema(
         description = "ID специалиста, которому принадлежит пациент",
         example = "1",
@@ -29,7 +29,6 @@ data class CreatePatientRequest(
     )
     val fullName: String,
 
-    @field:NotNull
     @field:PastOrPresent
     @Schema(
         description = "Дата рождения",

@@ -3,7 +3,6 @@ package com.basova.neuroDiagnost.patient.dto
 import com.basova.neuroDiagnost.patient.enum.Sex
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.PastOrPresent
 import jakarta.validation.constraints.Size
 import java.time.LocalDate
@@ -19,7 +18,6 @@ data class UpdatePatientRequest(
     )
     val fullName: String,
 
-    @field:NotNull
     @field:PastOrPresent
     @Schema(
         description = "Дата рождения",
