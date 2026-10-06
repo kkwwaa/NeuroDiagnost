@@ -39,6 +39,9 @@ class SessionProbe(
     )
     var probe: Probe,
 
+    @Column(name = "sort_order", nullable = false)
+    var sortOrder: Long,
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var status: SessionProbeStatus,

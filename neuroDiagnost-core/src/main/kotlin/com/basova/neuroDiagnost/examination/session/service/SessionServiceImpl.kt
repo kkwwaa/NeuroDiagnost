@@ -54,6 +54,7 @@ class SessionServiceImpl (
                 SessionProbe(
                     session = savedSession,
                     probe = protocolProbe.probe,
+                    sortOrder = protocolProbe.sortOrder,
                     status = SessionProbeStatus.NOT_STARTED
                 )
             }
@@ -74,26 +75,12 @@ class SessionServiceImpl (
     override fun findProbes(sessionId: Long): List<SessionProbeResponse> {
         val session = findSessionById(sessionId)
 
-        val sessionProbesByProbeId = sessionProbeRepository
-            .findAllBySessionId(sessionId)
-            .associateBy { sessionProbe ->
-                requireNotNull(sessionProbe.probe.id)
-            }
+        val sessionProbes = sessionProbeRepository
+            .findAllBySessionIdOrderBySortOrder(sessionId).map {
+            toResponse(it)
+        }
 
-        val protocolId = requireNotNull(session.protocol.id)
-
-        return protocolProbeRepository
-            .findAllByProtocolIdOrderBySortOrder(protocolId)
-            .map { protocolProbe ->
-                val probeId = requireNotNull(protocolProbe.probe.id)
-
-                val sessionProbe = requireNotNull(sessionProbesByProbeId[probeId])
-
-                toResponse(
-                    sessionProbe = sessionProbe,
-                    sortOrder = protocolProbe.sortOrder
-                )
-            }
+        return sessionProbes
     }
 
     private fun findSessionById(id: Long): Session {
