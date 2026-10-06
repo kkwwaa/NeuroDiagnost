@@ -3,6 +3,7 @@ package com.basova.neuroDiagnost.patient.mapper
 import com.basova.neuroDiagnost.patient.dto.PatientResponse
 import com.basova.neuroDiagnost.patient.entity.Patient
 
+// todo: remove object
 object PatientMapper {
 
     fun toResponse(patient: Patient): PatientResponse {
