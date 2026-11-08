@@ -25,8 +25,8 @@ class ParameterOption(
     var value: String,
 
     @Column(name = "score", nullable = false)
-    var score: Float,
+    var score: Double,
 
     @Column(name = "sort_order", nullable = false)
-    var sortOrder: Long
+    var sortOrder: Int
 )

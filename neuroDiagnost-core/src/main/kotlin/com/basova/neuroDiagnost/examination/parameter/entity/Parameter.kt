@@ -30,11 +30,11 @@ class Parameter(
     var direction: ParameterDirection,
 
     @Column(name = "min_value")
-    var minValue: Float? = null,
+    var minValue: Double? = null,
 
     @Column(name = "max_value")
-    var maxValue: Float? = null,
+    var maxValue: Double? = null,
 
     @Column(name = "weight", nullable = false)
-    var weight: Float = 1.0f
+    var weight: Double = 1.0
 )

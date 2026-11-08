@@ -23,5 +23,5 @@ data class ParameterOptionResponse(
         example = "1",
         required = true
     )
-    val sortOrder: Long
+    val sortOrder: Int
 )

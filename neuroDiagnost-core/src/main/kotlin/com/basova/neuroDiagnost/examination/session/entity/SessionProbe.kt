@@ -40,7 +40,7 @@ class SessionProbe(
     var probe: Probe,
 
     @Column(name = "sort_order", nullable = false)
-    var sortOrder: Long,
+    var sortOrder: Int,
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
