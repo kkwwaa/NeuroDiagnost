@@ -70,6 +70,21 @@ class GlobalExceptionHandler {
             }
     }
 
+    @ExceptionHandler(ProbeNotInSessionException::class)
+    fun handleProbeNotInSession(
+        exception: ProbeNotInSessionException
+    ): ProblemDetail {
+
+        return ProblemDetail
+            .forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                exception.message ?: PROBE_NOT_IN_SESSION
+            )
+            .apply {
+                title = PROBE_NOT_IN_SESSION
+            }
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidation(
         exception: MethodArgumentNotValidException

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import com.basova.neuroDiagnost.examination.parameter.dto.ProbeParameterResponse
 
 @RestController
 @RequestMapping("/api/v1/sessions")
@@ -57,5 +58,22 @@ class SessionControllerImpl (
         return ResponseEntity.ok(probes)
     }
 
+    @Operation(
+        summary = "Получить параметры пробы сессии",
+        description = "Возвращает параметры указанной пробы в порядке их отображения"
+    )
+    @GetMapping("/{sessionId}/probes/{probeId}/parameters")
+    @ApiResponse(responseCode = "200", description = "Параметры пробы найдены")
+    override fun findProbeParameters(
+        @Parameter(description = "ID сессии", example = "1")
+        @PathVariable sessionId: Long,
+
+        @Parameter(description = "ID пробы", example = "1")
+        @PathVariable probeId: Long
+    ): ResponseEntity<List<ProbeParameterResponse>> {
+        val parameters = sessionService.findProbeParameters(sessionId, probeId)
+
+        return ResponseEntity.ok(parameters)
+    }
 
 }
