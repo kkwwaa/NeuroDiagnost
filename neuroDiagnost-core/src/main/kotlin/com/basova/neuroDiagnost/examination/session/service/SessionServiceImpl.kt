@@ -8,8 +8,13 @@ import com.basova.neuroDiagnost.examination.session.entity.Session
 import com.basova.neuroDiagnost.examination.session.entity.SessionProbe
 import com.basova.neuroDiagnost.examination.session.dto.SessionProbeResponse
 import com.basova.neuroDiagnost.common.exception.PatientNotFoundException
+import com.basova.neuroDiagnost.common.exception.ProbeNotInSessionException
 import com.basova.neuroDiagnost.common.exception.ProtocolNotFoundException
 import com.basova.neuroDiagnost.common.exception.SessionNotFoundException
+import com.basova.neuroDiagnost.examination.parameter.dto.ProbeParameterResponse
+import com.basova.neuroDiagnost.examination.parameter.mapper.toResponse
+import com.basova.neuroDiagnost.examination.parameter.repository.ParameterOptionRepository
+import com.basova.neuroDiagnost.examination.parameter.repository.ProbeParameterRepository
 import com.basova.neuroDiagnost.examination.session.enum.SessionProbeStatus
 import com.basova.neuroDiagnost.examination.session.enum.SessionStatus
 import com.basova.neuroDiagnost.examination.session.mapper.toResponse
@@ -25,7 +30,9 @@ class SessionServiceImpl (
     val patientRepository: PatientRepository,
     val protocolRepository: ProtocolRepository,
     val protocolProbeRepository: ProtocolProbeRepository,
-    val sessionProbeRepository: SessionProbeRepository
+    val sessionProbeRepository: SessionProbeRepository,
+    val probeParameterRepository: ProbeParameterRepository,
+    val parameterOptionRepository: ParameterOptionRepository
 ) : SessionService {
 
     @Transactional
@@ -81,6 +88,41 @@ class SessionServiceImpl (
         }
 
         return sessionProbes
+    }
+
+    @Transactional(readOnly = true)
+    override fun findProbeParameters(sessionId: Long, probeId: Long): List<ProbeParameterResponse> {
+        findSessionById(sessionId)
+
+        if (!sessionProbeRepository.existsBySessionIdAndProbeId(sessionId, probeId)) {
+            throw ProbeNotInSessionException(sessionId, probeId)
+        }
+
+        val probeParameters = probeParameterRepository
+            .findAllByProbeIdOrderBySortOrder(probeId)
+
+        if (probeParameters.isEmpty()) {
+            return emptyList()
+        }
+
+        val parameterIds = probeParameters.map {
+            requireNotNull(it.parameter.id)
+        }
+
+        val optionsByParameterId = parameterOptionRepository
+            .findAllByParameterIdInOrderByParameterIdAscSortOrderAsc(parameterIds)
+            .groupBy {
+                requireNotNull(it.parameter.id)
+            }
+
+        return probeParameters.map { probeParameter ->
+            val parameterId = requireNotNull(probeParameter.parameter.id)
+
+            toResponse(
+                probeParameter = probeParameter,
+                options = optionsByParameterId[parameterId].orEmpty()
+            )
+        }
     }
 
     private fun findSessionById(id: Long): Session {
