@@ -36,5 +36,9 @@ class Parameter(
     var maxValue: Double? = null,
 
     @Column(name = "weight", nullable = false)
-    var weight: Double = 1.0
-)
+    var weight: Double = DEFAULT_WEIGHT
+)  {
+    companion object {
+        const val DEFAULT_WEIGHT = 1.0
+    }
+}

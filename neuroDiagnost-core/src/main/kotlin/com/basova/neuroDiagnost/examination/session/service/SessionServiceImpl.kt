@@ -73,14 +73,14 @@ class SessionServiceImpl (
 
     @Transactional(readOnly = true)
     override fun findById(sessionId: Long): SessionResponse {
-        val session = findSessionById(sessionId)
+        val session = getSessionById(sessionId)
 
         return toResponse(session)
     }
 
     @Transactional(readOnly = true)
     override fun findProbes(sessionId: Long): List<SessionProbeResponse> {
-        val session = findSessionById(sessionId)
+        checkSessionExists(sessionId)
 
         val sessionProbes = sessionProbeRepository
             .findAllBySessionIdOrderBySortOrder(sessionId).map {
@@ -92,7 +92,7 @@ class SessionServiceImpl (
 
     @Transactional(readOnly = true)
     override fun findProbeParameters(sessionId: Long, probeId: Long): List<ProbeParameterResponse> {
-        findSessionById(sessionId)
+        checkSessionExists(sessionId)
 
         if (!sessionProbeRepository.existsBySessionIdAndProbeId(sessionId, probeId)) {
             throw ProbeNotInSessionException(sessionId, probeId)
@@ -125,10 +125,14 @@ class SessionServiceImpl (
         }
     }
 
-    private fun findSessionById(id: Long): Session {
+    private fun getSessionById(id: Long): Session {
         return sessionRepository.findById(id)
             .orElseThrow {
                 SessionNotFoundException(id)
             }
+    }
+
+    private fun checkSessionExists(id: Long) {
+        getSessionById(id)
     }
 }

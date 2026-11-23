@@ -9,7 +9,6 @@ import com.basova.neuroDiagnost.examination.parameter.enum.ParameterDirection
 import com.basova.neuroDiagnost.examination.parameter.enum.ParameterValueType
 import com.basova.neuroDiagnost.examination.parameter.repository.ParameterOptionRepository
 import com.basova.neuroDiagnost.examination.parameter.repository.ProbeParameterRepository
-import com.basova.neuroDiagnost.examination.probe.entity.Probe
 import com.basova.neuroDiagnost.examination.protocol.repository.ProtocolProbeRepository
 import com.basova.neuroDiagnost.examination.protocol.repository.ProtocolRepository
 import com.basova.neuroDiagnost.examination.session.entity.Session
@@ -22,9 +21,10 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.Optional
+import kotlin.random.Random
 
 class SessionServiceImplTest {
 
@@ -36,77 +36,66 @@ class SessionServiceImplTest {
     private val probeParameterRepository = mockk<ProbeParameterRepository>()
     private val parameterOptionRepository = mockk<ParameterOptionRepository>()
 
-    private lateinit var sessionService: SessionServiceImpl
-
-    @BeforeEach
-    fun setUp() {
-        sessionService = SessionServiceImpl(
-            sessionRepository = sessionRepository,
-            patientRepository = patientRepository,
-            protocolRepository = protocolRepository,
-            protocolProbeRepository = protocolProbeRepository,
-            sessionProbeRepository = sessionProbeRepository,
-            probeParameterRepository = probeParameterRepository,
-            parameterOptionRepository = parameterOptionRepository
-        )
-    }
+    private val sessionService = SessionServiceImpl(
+        sessionRepository = sessionRepository,
+        patientRepository = patientRepository,
+        protocolRepository = protocolRepository,
+        protocolProbeRepository = protocolProbeRepository,
+        sessionProbeRepository = sessionProbeRepository,
+        probeParameterRepository = probeParameterRepository,
+        parameterOptionRepository = parameterOptionRepository
+    )
 
     @Test
     fun `Возвращает параметры пробы с опциями`() {
-        val sessionId = 1L
-        val probeId = 201L
+        val sessionId = randomId()
+        val probeId = randomId()
+
+        val numberParameterId = randomId()
+        val optionParameterId = randomId()
+
+        val firstOptionId = randomId()
+        val secondOptionId = randomId()
 
         val session = mockk<Session>()
-        val probe = mockk<Probe>()
 
-        val numberParameter = Parameter(
-            id = 301,
-            name = "Объём воспроизведения",
-            valueType = ParameterValueType.NUMBER,
-            direction = ParameterDirection.DIRECT,
-            minValue = 0.0,
-            maxValue = 5.0,
-            weight = 1.0
+        val numberParameter = createParameter(
+            parameterId = numberParameterId,
+            type = ParameterValueType.NUMBER
         )
 
-        val optionParameter = Parameter(
-            id = 312,
-            name = "Степень самостоятельности",
-            valueType = ParameterValueType.OPTION,
-            direction = ParameterDirection.DIRECT,
-            weight = 0.7
+        val optionParameter = createParameter(
+            parameterId = optionParameterId,
+            type = ParameterValueType.OPTION
         )
 
         val probeParameters = listOf(
-            ProbeParameter(
-                id = 601,
-                probe = probe,
+            createProbeParameter(
                 parameter = numberParameter,
-                sortOrder = 1
+                sortOrder = FIRST_SORT_ORDER
             ),
-            ProbeParameter(
-                id = 602,
-                probe = probe,
+            createProbeParameter(
                 parameter = optionParameter,
-                sortOrder = 2
+                sortOrder = SECOND_SORT_ORDER
             )
         )
 
         val options = listOf(
-            ParameterOption(
-                id = 405,
+            createParameterOption(
+                optionId = firstOptionId,
                 parameter = optionParameter,
-                value = "Самостоятельно",
-                score = 1.0,
-                sortOrder = 1
+                sortOrder = FIRST_SORT_ORDER
             ),
-            ParameterOption(
-                id = 406,
+            createParameterOption(
+                optionId = secondOptionId,
                 parameter = optionParameter,
-                value = "После подсказки",
-                score = 0.5,
-                sortOrder = 2
+                sortOrder = SECOND_SORT_ORDER
             )
+        )
+
+        val parameterIds = listOf(
+            numberParameterId,
+            optionParameterId
         )
 
         every {
@@ -123,33 +112,50 @@ class SessionServiceImplTest {
 
         every {
             parameterOptionRepository
-                .findAllByParameterIdInOrderByParameterIdAscSortOrderAsc(
-                    listOf(301L, 312L)
-                )
+                .findAllByParameterIdInOrderByParameterIdAscSortOrderAsc(parameterIds)
         } returns options
 
         val result = sessionService.findProbeParameters(sessionId, probeId)
 
-        assertEquals(2, result.size)
+        assertEquals(probeParameters.size, result.size)
 
-        assertEquals(301L, result[0].parameterId)
-        assertEquals(1, result[0].sortOrder)
-        assertEquals(emptyList<Any>(), result[0].options)
+        assertEquals(numberParameterId, result[0].parameterId)
+        assertEquals(FIRST_SORT_ORDER, result[0].sortOrder)
+        assertTrue(result[0].options.isEmpty())
 
-        assertEquals(312L, result[1].parameterId)
-        assertEquals(2, result[1].sortOrder)
+        assertEquals(optionParameterId, result[1].parameterId)
+        assertEquals(SECOND_SORT_ORDER, result[1].sortOrder)
 
-        assertEquals(2, result[1].options.size)
-        assertEquals(405L, result[1].options[0].optionId)
-        assertEquals(1, result[1].options[0].sortOrder)
-        assertEquals(406L, result[1].options[1].optionId)
-        assertEquals(2, result[1].options[1].sortOrder)
+        assertEquals(options.size, result[1].options.size)
+
+        assertEquals(firstOptionId, result[1].options[0].optionId)
+        assertEquals(FIRST_SORT_ORDER, result[1].options[0].sortOrder)
+
+        assertEquals(secondOptionId, result[1].options[1].optionId)
+        assertEquals(SECOND_SORT_ORDER, result[1].options[1].sortOrder)
+
+        verify(exactly = 1) {
+            sessionRepository.findById(sessionId)
+        }
+
+        verify(exactly = 1) {
+            sessionProbeRepository.existsBySessionIdAndProbeId(sessionId, probeId)
+        }
+
+        verify(exactly = 1) {
+            probeParameterRepository.findAllByProbeIdOrderBySortOrder(probeId)
+        }
+
+        verify(exactly = 1) {
+            parameterOptionRepository
+                .findAllByParameterIdInOrderByParameterIdAscSortOrderAsc(parameterIds)
+        }
     }
 
     @Test
     fun `Выбрасывает исключение когда сессии не существует`() {
-        val sessionId = 999L
-        val probeId = 201L
+        val sessionId = randomId()
+        val probeId = randomId()
 
         every {
             sessionRepository.findById(sessionId)
@@ -159,6 +165,10 @@ class SessionServiceImplTest {
             sessionService.findProbeParameters(sessionId, probeId)
         }
 
+        verify(exactly = 1) {
+            sessionRepository.findById(sessionId)
+        }
+
         verify(exactly = 0) {
             sessionProbeRepository.existsBySessionIdAndProbeId(any(), any())
         }
@@ -166,12 +176,17 @@ class SessionServiceImplTest {
         verify(exactly = 0) {
             probeParameterRepository.findAllByProbeIdOrderBySortOrder(any())
         }
+
+        verify(exactly = 0) {
+            parameterOptionRepository
+                .findAllByParameterIdInOrderByParameterIdAscSortOrderAsc(any())
+        }
     }
 
     @Test
     fun `Выбрасывает исключение когда проба не входит в сессию`() {
-        val sessionId = 1L
-        val probeId = 209L
+        val sessionId = randomId()
+        val probeId = randomId()
 
         val session = mockk<Session>()
 
@@ -187,15 +202,28 @@ class SessionServiceImplTest {
             sessionService.findProbeParameters(sessionId, probeId)
         }
 
+        verify(exactly = 1) {
+            sessionRepository.findById(sessionId)
+        }
+
+        verify(exactly = 1) {
+            sessionProbeRepository.existsBySessionIdAndProbeId(sessionId, probeId)
+        }
+
         verify(exactly = 0) {
             probeParameterRepository.findAllByProbeIdOrderBySortOrder(any())
+        }
+
+        verify(exactly = 0) {
+            parameterOptionRepository
+                .findAllByParameterIdInOrderByParameterIdAscSortOrderAsc(any())
         }
     }
 
     @Test
     fun `Возвращает пустой список когда у пробы нет параметров`() {
-        val sessionId = 1L
-        val probeId = 201L
+        val sessionId = randomId()
+        val probeId = randomId()
 
         val session = mockk<Session>()
 
@@ -213,11 +241,95 @@ class SessionServiceImplTest {
 
         val result = sessionService.findProbeParameters(sessionId, probeId)
 
-        assertEquals(emptyList<Any>(), result)
+        assertTrue(result.isEmpty())
+
+        verify(exactly = 1) {
+            sessionRepository.findById(sessionId)
+        }
+
+        verify(exactly = 1) {
+            sessionProbeRepository.existsBySessionIdAndProbeId(sessionId, probeId)
+        }
+
+        verify(exactly = 1) {
+            probeParameterRepository.findAllByProbeIdOrderBySortOrder(probeId)
+        }
 
         verify(exactly = 0) {
             parameterOptionRepository
                 .findAllByParameterIdInOrderByParameterIdAscSortOrderAsc(any())
         }
+    }
+
+    private fun createParameter(
+        parameterId: Long = randomId(),
+        type: ParameterValueType = ParameterValueType.NUMBER
+    ): Parameter {
+        val parameter = mockk<Parameter>()
+
+        val minValue = if (type == ParameterValueType.NUMBER) {
+            DEFAULT_MIN_VALUE
+        } else {
+            null
+        }
+
+        val maxValue = if (type == ParameterValueType.NUMBER) {
+            DEFAULT_MAX_VALUE
+        } else {
+            null
+        }
+
+        every { parameter.id } returns parameterId
+        every { parameter.name } returns DEFAULT_PARAMETER_NAME
+        every { parameter.valueType } returns type
+        every { parameter.direction } returns ParameterDirection.DIRECT
+        every { parameter.minValue } returns minValue
+        every { parameter.maxValue } returns maxValue
+        every { parameter.weight } returns DEFAULT_WEIGHT
+
+        return parameter
+    }
+
+    private fun createProbeParameter(
+        parameter: Parameter,
+        sortOrder: Int
+    ): ProbeParameter {
+        val probeParameter = mockk<ProbeParameter>()
+
+        every { probeParameter.parameter } returns parameter
+        every { probeParameter.sortOrder } returns sortOrder
+
+        return probeParameter
+    }
+
+    private fun createParameterOption(
+        optionId: Long = randomId(),
+        parameter: Parameter,
+        sortOrder: Int
+    ): ParameterOption {
+        val option = mockk<ParameterOption>()
+
+        every { option.id } returns optionId
+        every { option.parameter } returns parameter
+        every { option.value } returns DEFAULT_OPTION_VALUE
+        every { option.sortOrder } returns sortOrder
+
+        return option
+    }
+
+    private fun randomId(): Long {
+        return Random.nextLong(1, Long.MAX_VALUE)
+    }
+
+    private companion object {
+        const val DEFAULT_PARAMETER_NAME = "Тестовый параметр"
+        const val DEFAULT_OPTION_VALUE = "Тестовая опция"
+
+        const val DEFAULT_MIN_VALUE = 0.0
+        const val DEFAULT_MAX_VALUE = 100.0
+        const val DEFAULT_WEIGHT = 1.0
+
+        const val FIRST_SORT_ORDER = 1
+        const val SECOND_SORT_ORDER = 2
     }
 }

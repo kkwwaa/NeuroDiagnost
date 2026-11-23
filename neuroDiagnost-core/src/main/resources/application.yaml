@@ -2,17 +2,16 @@ spring:
   config:
     import: optional:file:../.env[.properties]
   application:
-    name: ${SPRING_APPLICATION_NAME}
+    name: neuroDiagnost
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
+    url: jdbc:postgresql://localhost:5432/neuroDiagnost
+    username: postgres
     password: ${SPRING_DATASOURCE_PASSWORD}
 
   jpa:
     hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+      ddl-auto: validate
 
   liquibase:
-    change-log: ${SPRING_LIQUIBASE_CHANGE_LOG}
-
+    change-log: classpath:db/changelog/db.changelog-master.yaml
