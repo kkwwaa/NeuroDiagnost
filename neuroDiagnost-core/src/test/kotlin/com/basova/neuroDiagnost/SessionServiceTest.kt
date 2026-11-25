@@ -48,14 +48,14 @@ class SessionServiceImplTest {
 
     @Test
     fun `Возвращает параметры пробы с опциями`() {
-        val sessionId = randomId()
-        val probeId = randomId()
+        val sessionId = randomPositiveNumber()
+        val probeId = randomPositiveNumber()
 
-        val numberParameterId = randomId()
-        val optionParameterId = randomId()
+        val numberParameterId = randomPositiveNumber()
+        val optionParameterId = randomPositiveNumber()
 
-        val firstOptionId = randomId()
-        val secondOptionId = randomId()
+        val firstOptionId = randomPositiveNumber()
+        val secondOptionId = randomPositiveNumber()
 
         val session = mockk<Session>()
 
@@ -154,8 +154,8 @@ class SessionServiceImplTest {
 
     @Test
     fun `Выбрасывает исключение когда сессии не существует`() {
-        val sessionId = randomId()
-        val probeId = randomId()
+        val sessionId = randomPositiveNumber()
+        val probeId = randomPositiveNumber()
 
         every {
             sessionRepository.findById(sessionId)
@@ -185,8 +185,8 @@ class SessionServiceImplTest {
 
     @Test
     fun `Выбрасывает исключение когда проба не входит в сессию`() {
-        val sessionId = randomId()
-        val probeId = randomId()
+        val sessionId = randomPositiveNumber()
+        val probeId = randomPositiveNumber()
 
         val session = mockk<Session>()
 
@@ -222,8 +222,8 @@ class SessionServiceImplTest {
 
     @Test
     fun `Возвращает пустой список когда у пробы нет параметров`() {
-        val sessionId = randomId()
-        val probeId = randomId()
+        val sessionId = randomPositiveNumber()
+        val probeId = randomPositiveNumber()
 
         val session = mockk<Session>()
 
@@ -262,22 +262,18 @@ class SessionServiceImplTest {
     }
 
     private fun createParameter(
-        parameterId: Long = randomId(),
+        parameterId: Long = randomPositiveNumber(),
         type: ParameterValueType = ParameterValueType.NUMBER
     ): Parameter {
         val parameter = mockk<Parameter>()
 
         val minValue = if (type == ParameterValueType.NUMBER) {
             DEFAULT_MIN_VALUE
-        } else {
-            null
-        }
+        } else { null }
 
         val maxValue = if (type == ParameterValueType.NUMBER) {
             DEFAULT_MAX_VALUE
-        } else {
-            null
-        }
+        } else { null }
 
         every { parameter.id } returns parameterId
         every { parameter.name } returns DEFAULT_PARAMETER_NAME
@@ -303,7 +299,7 @@ class SessionServiceImplTest {
     }
 
     private fun createParameterOption(
-        optionId: Long = randomId(),
+        optionId: Long = randomPositiveNumber(),
         parameter: Parameter,
         sortOrder: Int
     ): ParameterOption {
@@ -317,7 +313,7 @@ class SessionServiceImplTest {
         return option
     }
 
-    private fun randomId(): Long {
+    private fun randomPositiveNumber(): Long {
         return Random.nextLong(1, Long.MAX_VALUE)
     }
 

@@ -39,6 +39,6 @@ class Parameter(
     var weight: Double = DEFAULT_WEIGHT
 )  {
     companion object {
-        const val DEFAULT_WEIGHT = 1.0
+        private const val DEFAULT_WEIGHT = 1.0
     }
 }
