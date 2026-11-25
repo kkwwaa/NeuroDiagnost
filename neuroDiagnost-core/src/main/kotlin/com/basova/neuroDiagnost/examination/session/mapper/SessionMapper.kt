@@ -2,6 +2,7 @@ package com.basova.neuroDiagnost.examination.session.mapper
 
 import com.basova.neuroDiagnost.examination.session.dto.SessionResponse
 import com.basova.neuroDiagnost.examination.session.entity.Session
+import com.basova.neuroDiagnost.examination.session.entity.SessionProbe
 
 fun toResponse(session: Session): SessionResponse {
     return SessionResponse(

@@ -16,7 +16,7 @@ data class SessionProbeResponse(
     val instruction: String?,
 
     @Schema(description = "Порядок выполнения пробы", example = "1", required = true)
-    val sortOrder: Long,
+    val sortOrder: Int,
 
     @Schema(description = "Статус выполнения пробы", example = "NOT_STARTED", required = true)
     val status: SessionProbeStatus,

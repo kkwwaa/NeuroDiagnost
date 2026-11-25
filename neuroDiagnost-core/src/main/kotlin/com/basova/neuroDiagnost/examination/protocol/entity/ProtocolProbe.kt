@@ -37,5 +37,5 @@ class ProtocolProbe (
     var probe: Probe,
 
     @Column(name = "sort_order", nullable = false)
-    var sortOrder: Long,
+    var sortOrder: Int,
 )

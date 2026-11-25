@@ -8,7 +8,7 @@ import com.basova.neuroDiagnost.patient.dto.CreatePatientRequest
 import com.basova.neuroDiagnost.patient.dto.PatientResponse
 import com.basova.neuroDiagnost.patient.dto.UpdatePatientRequest
 import com.basova.neuroDiagnost.patient.entity.Patient
-import com.basova.neuroDiagnost.patient.mapper.PatientMapper
+import com.basova.neuroDiagnost.patient.mapper.toResponse
 import com.basova.neuroDiagnost.patient.repository.PatientRepository
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.stereotype.Service
@@ -34,20 +34,20 @@ class PatientServiceImpl(
 
         val savedPatient = patientRepository.save(patient)
 
-        return PatientMapper.toResponse(savedPatient)
+        return toResponse(savedPatient)
     }
 
     @Transactional(readOnly = true)
     override fun findById(patientId: Long): PatientResponse {
         val patient = findPatientById(patientId)
 
-        return PatientMapper.toResponse(patient)
+        return toResponse(patient)
     }
 
     @Transactional(readOnly = true)
     override fun findAllBySpecialistId(specialistId: Long): List<PatientResponse> {
         val patients = patientRepository.findAllBySpecialistId(specialistId).map {
-            PatientMapper.toResponse(it)
+            toResponse(it)
         }
 
         return patients
@@ -64,7 +64,7 @@ class PatientServiceImpl(
         patient.phone = request.phone?.trim()
         patient.anamnesis = request.anamnesis?.trim()
 
-        return PatientMapper.toResponse(patient)
+        return toResponse(patient)
     }
 
     @Transactional

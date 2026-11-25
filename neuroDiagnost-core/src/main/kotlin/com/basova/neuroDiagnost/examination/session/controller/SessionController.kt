@@ -1,5 +1,6 @@
 package com.basova.neuroDiagnost.examination.session.controller
 
+import com.basova.neuroDiagnost.examination.parameter.dto.ProbeParameterResponse
 import com.basova.neuroDiagnost.examination.session.dto.CreateSessionRequest
 import com.basova.neuroDiagnost.examination.session.dto.SessionProbeResponse
 import com.basova.neuroDiagnost.examination.session.dto.SessionResponse
@@ -12,4 +13,5 @@ interface SessionController {
 
     fun findProbes(sessionId: Long) : ResponseEntity<List<SessionProbeResponse>>
 
+    fun findProbeParameters(sessionId: Long, probeId: Long): ResponseEntity<List<ProbeParameterResponse>>
 }
